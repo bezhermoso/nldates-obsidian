@@ -7,6 +7,7 @@ import {
 } from "obsidian-daily-notes-interface";
 
 import DatePickerModal from "./modals/date-picker";
+import { NLDNavigator } from './modals/navigation'
 import { NLDResult, getParsedDate } from "./parser";
 import { NLDSettingsTab, NLDSettings, DEFAULT_SETTINGS } from "./settings";
 import DateSuggest from "./suggest/date-suggest";
@@ -76,6 +77,22 @@ export default class NaturalLanguageDates extends Plugin {
           return !!this.app.workspace.activeLeaf;
         }
         new DatePickerModal(this.app, this).open();
+      },
+      hotkeys: [],
+    });
+
+    this.addCommand({
+      id: "nlp-navigation",
+      name: "Date navigation",
+      checkCallback: (checking: boolean) => {
+        let leaf = this.app.workspace.activeLeaf;
+        if (leaf) {
+          if (!checking) {
+            new NLDNavigator(this.app, this).open();
+          }
+          return true;
+        }
+        return false;
       },
       hotkeys: [],
     });
