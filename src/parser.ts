@@ -1,5 +1,6 @@
 
 import chrono from "chrono-node";
+import type { Moment } from "moment";
 
 var getLastDayOfMonth = function (y: any, m: any) {
   return new Date(y, m, 0).getDate();
@@ -22,40 +23,40 @@ custom.parsers.push({
 export interface NLDResult {
   formattedString: string;
   date: Date;
-  moment: any;
+  moment: Moment;
 }
 
 
 export function getParsedDate(selectedText: string): Date {
-    var nextDateMatch = selectedText.match(/next\s([\w]+)/i);
-    var lastDayOfMatch = selectedText.match(
+    const nextDateMatch = selectedText.match(/next\s([\w]+)/i);
+    const lastDayOfMatch = selectedText.match(
       /(last day of|end of)\s*([^\n\r]*)/i
     );
-    var midOf = selectedText.match(/mid\s([\w]+)/i);
+    const midOf = selectedText.match(/mid\s([\w]+)/i);
 
     if (nextDateMatch && nextDateMatch[1] === "week") {
       return custom.parseDate(`next ${this.settings.weekStart}`, new Date(), {
         forwardDate: true,
       });
     } else if (nextDateMatch && nextDateMatch[1] === "month") {
-      var thisMonth = custom.parseDate("this month", new Date(), {
+      const thisMonth = custom.parseDate("this month", new Date(), {
         forwardDate: true,
       });
       return custom.parseDate(selectedText, thisMonth, {
         forwardDate: true,
       });
     } else if (nextDateMatch && nextDateMatch[1] === "year") {
-      var thisYear = custom.parseDate("this year", new Date(), {
+      const thisYear = custom.parseDate("this year", new Date(), {
         forwardDate: true,
       });
       return custom.parseDate(selectedText, thisYear, {
         forwardDate: true,
       });
     } else if (lastDayOfMatch) {
-      var tempDate = custom.parse(lastDayOfMatch[2]);
-      var year = tempDate[0].start.get("year"),
+      const tempDate = custom.parse(lastDayOfMatch[2]);
+      const year = tempDate[0].start.get("year"),
         month = tempDate[0].start.get("month");
-      var lastDay = getLastDayOfMonth(year, month);
+      const lastDay = getLastDayOfMonth(year, month);
       return custom.parseDate(`${year}-${month}-${lastDay}`, new Date(), {
         forwardDate: true,
       });

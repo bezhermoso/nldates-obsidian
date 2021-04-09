@@ -2,20 +2,21 @@ import { App, ButtonComponent, MarkdownView, Modal, MomentFormatComponent, TextC
 import NaturalLanguageDates from "src/main";
 
 
-export class ParseMomentModal extends Modal {
+export class DatePickerModal extends Modal {
   parsedDateString = "";
   activeView: MarkdownView;
-  activeEditor: CodeMirror.Editor;
   activeCursor: CodeMirror.Position;
   plugin: NaturalLanguageDates;
 
   constructor(app: App, plugin: NaturalLanguageDates) {
     super(app);
     this.plugin = plugin;
-    this.activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
+    
+    const { workspace } = this.app;
+    this.activeView = workspace.getActiveViewOfType(MarkdownView);
     if (!this.activeView) return;
-    this.activeEditor = this.activeView.sourceMode.cmEditor;
-    this.activeCursor = this.activeEditor.getCursor();
+    
+    this.activeCursor = this.activeView.editor.getCursor();
   }
 
   onOpen() {
@@ -58,11 +59,11 @@ export class ParseMomentModal extends Modal {
         if (!parsedDate.moment.isValid()) this.parsedDateString = "";
         if (toggleLink.getValue() && this.parsedDateString !== "")
           this.parsedDateString = `[[${this.parsedDateString}]]`;
-        this.activeEditor.focus();
-        this.activeEditor.setCursor(this.activeCursor);
+        this.activeView.editor.focus();
+        this.activeView.editor.setCursor(this.activeCursor);
         this.plugin.insertDateString(
           this.parsedDateString,
-          this.activeEditor,
+          this.activeView.editor,
           this.activeCursor
         );
         this.close();
