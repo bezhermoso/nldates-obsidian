@@ -14,6 +14,7 @@ export interface NLDSettings {
   modalToggleTime: boolean;
   modalToggleLink: boolean;
   modalMomentFormat: string;
+  addTimeToAutoSuggest: boolean;
 }
 
 export const DEFAULT_SETTINGS: NLDSettings = {
@@ -29,6 +30,7 @@ export const DEFAULT_SETTINGS: NLDSettings = {
   modalToggleTime: false,
   modalToggleLink: false,
   modalMomentFormat: "YYYY-MM-DD HH:mm",
+  addTimeToAutoSuggest: true,
 };
 
 export class NLDSettingsTab extends PluginSettingTab {
@@ -140,6 +142,22 @@ export class NLDSettingsTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           })
       );
+
+    let timeAutosuggest = (this.plugin.settings.autocompleteTriggerPhrase || "@") + "time";
+
+    new Setting(containerEl)
+      .setName(`Support "${timeAutosuggest}" in autosuggest?`)
+    .setDesc(
+      `If enabled, ${timeAutosuggest} will appear in the autosuggest list to expand to current time.`,
+    ).addToggle((toggle) => 
+      toggle
+        .setValue(this.plugin.settings.addTimeToAutoSuggest)
+        .onChange(async (value) => {
+          this.plugin.settings.addTimeToAutoSuggest = value;
+          await this.plugin.saveSettings();
+        })
+    );
+
 
     new Setting(containerEl)
       .setName("Trigger phrase")
